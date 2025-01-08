@@ -8,14 +8,15 @@ export const todosSlice = createSlice({
         error: null
     },
     reducers: {
-        setTodoData(state, action) {            
-            state.todos = action.payload;
+        setTodoData(state, action) {
+            state.todos = action.payload
+            localStorage.setItem('todos', JSON.stringify(action.payload))
         },
         setError(state, action) {
-            state.error = action.payload;
+            state.error = action.payload
         },
     }
 })
 
-export const { setTodoData, setError } = todosSlice.actions;
+export const { setTodoData, setError } = todosSlice.actions
 export default todosSlice.reducer;

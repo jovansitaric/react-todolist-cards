@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { errorMessages } from "../utils/constants";
 
 export default function Form() {
     const [formData, setFormData] = useState({
@@ -14,11 +15,6 @@ export default function Form() {
     });
 
     const [isFormSubmited, setIsFormSubmited] = useState(false);
-
-    const errorMessages = {
-        generic: "Postoji greška u formi. Pokušajte ponovo.",
-        required: "Ovo polje je obavezno.",
-    };
 
     const handleFormSubmit = (e) => {
         setIsFormSubmited(true);

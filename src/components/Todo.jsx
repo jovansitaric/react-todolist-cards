@@ -5,26 +5,39 @@ import { setTodoData } from '../store/todos/todo'
 import Loader from "./Loader"
 
 import fontColorContrast from 'font-color-contrast'
-import { CheckIcon, CloseIcon, ColorIcon, EditIcon } from "./Icons"
+import { CheckIcon, CloseIcon, ColorIcon, EditIcon, PlusIcon } from "./Icons"
+import { openModal } from "../store/modal/modal"
+import { colors } from "../utils/constants"
 
-const todoBgColor = '#e7ad40'
+const { todoBgColor } = colors
 
 const getLocalTodos = () => JSON.parse(localStorage.getItem('todos')) || []
-const setLocalTodoList = (todoList) => localStorage.setItem('todos', JSON.stringify(todoList))
 
 const variants = {
     visible: (customDelay) => ({
         opacity: 1,
         y: 0,
+        filter: "blur(0)",
         transition: {
             delay: customDelay * 0.1,
             duration: 0.5,
         },
     }),
-    hidden: { opacity: 0, y: -20 },
-    exit: { opacity: 0, y: 20, transition: { duration: 0.5 } },
+    hidden: { 
+        opacity: 0,
+        filter: "blur(5px)",
+        y: -20
+    },
+    exit: {
+        opacity: 0,
+        y: 20,
+        filter: "blur(5px)",
+        transition: 
+            { duration: 0.5 }
+    },
     hover: {
         scale: [ null, 1.05, 1 ],
+        filter: ["blur(0px)", "blur(1px)", "blur(0px)"],
         transition: {
             duration: .5,
         }
@@ -39,6 +52,16 @@ const variants = {
             stiffness: 250,
             damping: 15
         }
+    }
+}
+
+const floatingButtonVariants = {
+    hover: {
+        rotate: 180,
+        transition: { duration: .5 }
+    },
+    tap: {
+        scale: .9
     }
 }
 
@@ -74,16 +97,6 @@ export default function Todo() {
         [JSON.stringify(todoList?.length)]
     )
 
-    const setTodos = (todo) => {
-        dispatch(setTodoData(todo))
-        setLocalTodoList(todo)
-    }
-
-    const addTodo = () => {
-        const newList = [{id: Date.now(), todo: 'title'}, ...todoList]
-        setTodos(newList)
-    }
-
     const editTodo = (e, currentTodo) => {
         const currentText = e.target.parentNode.parentNode.querySelector('#todoTitle')?.innerText
         if (currentText) {
@@ -105,7 +118,7 @@ export default function Todo() {
         const newList = todoList.map(todo =>
             todo.id === currentTodo.id ? { ...todo, isEditing: !todo.isEditing } : todo
         )
-        setTodos(newList)
+        dispatch(setTodoData(newList))
     }
 
     const saveEdit = (e, id) => {
@@ -115,7 +128,7 @@ export default function Todo() {
             : todo
         )
         setIsEditing(false)
-        setTodos(newList)
+        dispatch(setTodoData(newList))
     }
 
     const cancelEdit = (e, id) => {
@@ -123,7 +136,7 @@ export default function Todo() {
             ? { ...todo, todo: currentText, isEditing: false }
             : todo
         )
-        setTodos(newList)
+        dispatch(setTodoData(newList))
         setIsEditing(false)
     }
 
@@ -139,7 +152,7 @@ export default function Todo() {
                 ? { ...todo, bgColor: e.target.value, color: fontColorContrast(e.target.value) }
                 : todo
         )
-        setTodos(newList)
+        dispatch(setTodoData(newList))
     }
 
     const completeTodo = (e, id) => {
@@ -148,12 +161,12 @@ export default function Todo() {
             : todo
         )
         e.target.blur()
-        setTodos(newList)
+        dispatch(setTodoData(newList))
     }
 
     const removeTodo = (id) => {
         const newList = todoList.filter(todo => todo.id != id)
-        setTodos(newList)
+        dispatch(setTodoData(newList))
     }
 
     const handleTodoTitleChange = (e) => {
@@ -174,7 +187,7 @@ export default function Todo() {
                                 className={`card ${todo.completed ? 'completed' : ''}`}
                                 style={{
                                     backgroundColor: todo.completed ? '#373f3f' : todo.bgColor,
-                                    color: fontColorContrast(todo.bgColor),
+                                    color: todo.color || fontColorContrast(todo.bgColor),
                                     pointerEvents: isEditing && !todo.isEditing ? 'none' : 'all'
                                 }}
                                 key={ todo.id }
@@ -224,6 +237,15 @@ export default function Todo() {
             ) : (
                 <Loader />
             )}
+            <motion.button 
+                variants={floatingButtonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                type="button"
+                className="icon addTodo icon-plus"
+                onClick={() => dispatch(openModal({ modalType: 'todo' }))}>
+                <PlusIcon />
+            </motion.button>
         </>
     )
 }

@@ -8,6 +8,7 @@ import Layout from './Layout/Layout.jsx'
 import store from './store/store.js'
 import { Provider } from 'react-redux'
 import { ThemeProvider } from './context/themeContext/themeProvider.jsx'
+import Modal from './components/Modal.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,9 +18,10 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path='/' element={<Layout />}>
               {/* <Route index element={<App />}></Route> */}
-              <Route path="/" element={<Todo />}></Route>
+              <Route path="/react-todolist-cards/" element={<Todo />}></Route>
             </Route>
           </Routes>
+          <Modal />
         </BrowserRouter>
       </ThemeProvider>
     </Provider>

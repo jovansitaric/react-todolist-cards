@@ -68,6 +68,7 @@ a {
   min-height: 7rem;
   padding: 2em;
   color: #fff;
+  background-color: #e7ad40;
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, .1), inset 0 0 5px #000;
@@ -132,6 +133,10 @@ a {
   }
 }
 
+.modal-error {
+  font-size: .8rem;
+}
+
 .cta {
   padding: .5rem 1rem;
   font-size: 1.6rem;
@@ -187,6 +192,20 @@ a {
   fill: #20d341;
 }
 
+.addTodo {
+  position: fixed;
+  bottom: 4.5rem;
+  right: 3.5rem;
+  width: 3rem;
+  height: 3rem;
+  padding: 0.7rem;
+  fill: #fff7;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 8px 1px #fff7,
+    inset 0 0 4px 1px #4447;
+}
+
 .todo-actions:not(input) {
   position: absolute;
   bottom: 0;
@@ -234,7 +253,7 @@ a {
     transform: translate(0);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    transition: 
+    transition:
       transform var(--transition-duration),
       min-height var(--transition-duration),
       padding var(--transition-duration);
@@ -295,4 +314,77 @@ a {
   text-align: center;
   border: 0;
   background-color: transparent;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  background-color: #0009;
+  z-index: 1;
+
+  > *:not(:first-child) {
+    margin-top: 1rem;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  input {
+    padding: 1rem;
+    border: 0;
+    border-radius: 12px;
+  }
+
+  .modal-actions {
+
+    > *:not(:first-child) {
+      margin-left: 1rem;
+    }
+  }
+}
+
+.btn {
+  min-width: 100px;
+  padding: .6rem 1rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  transition:
+    border var(--transition-duration),
+    background-color var(--transition-duration);
+
+  &.success {
+    border: 1px solid transparent;
+    background-color: #1e752e;
+
+    &:hover,
+    &:focus {
+      border: 1px solid #1e752e;
+      background-color: transparent;
+    }
+  }
+
+  &.cancel {
+    border: 1px solid transparent;
+    background-color: #8a1919;
+
+    &:hover,
+    &:focus {
+      border: 1px solid #8a1919;
+      background-color: transparent;
+    }
+  }
+}
+
+.form-control {
+
+  > *:not(:first-child) {
+    margin-top: .7rem;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
 }
