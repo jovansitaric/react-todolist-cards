@@ -78,7 +78,7 @@ export default function Todo() {
         if (getLocalTodos().length > 0)
             dispatch(setTodoData(getLocalTodos()))
         else {
-            fetch('https://dummyjson.com/todos')
+            fetch('https://dummyjson.com/todos/?limit=10')
                 .then(res => res.json())
                 .then(json => {
                     const updatedTodos = json.todos.map(todo => ({

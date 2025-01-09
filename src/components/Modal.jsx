@@ -41,8 +41,10 @@ export default function Modal() {
     }, 0);
 
     const handleCloseModal = (e) => {
-        if (e.target.tagName === "FORM" || e.target.id === 'cancelButton')
+        if (e.target.tagName === "FORM" || e.target.id === 'cancelButton') {
+            setTitleData('')
             dispatch(closeModal())
+        }
     }
 
     const handleChange = (e) => {
@@ -54,6 +56,7 @@ export default function Modal() {
         const newList = [{ id: Date.now(), todo: titleData, color: '#000' }, ...todoList]
         dispatch(setTodoData(newList))
         dispatch(closeModal())
+        setTitleData('')
     }
 
     return (
@@ -68,7 +71,7 @@ export default function Modal() {
                     onSubmit={(e) => handleSubmit(e)}
                     onClick={(e) => handleCloseModal(e)} >
                     <label htmlFor="todo">
-                        <h2>Title</h2>
+                        <h2>Create card</h2>
                     </label>
                     <div className="form-control">
                         <input type="text" id='todo' placeholder='e.g. Buy groceries' onChange={(e) => handleChange(e)} />
