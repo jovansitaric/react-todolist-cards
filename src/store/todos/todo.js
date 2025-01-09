@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 
 export const todosSlice = createSlice({
     name: 'todo',
@@ -19,4 +19,4 @@ export const todosSlice = createSlice({
 })
 
 export const { setTodoData, setError } = todosSlice.actions
-export default todosSlice.reducer;
+export default todosSlice.reducer

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useTheme } from "../hooks/useTheme";
-import { LeftArrow } from "./Icons";
+import { useTheme } from "../hooks/useTheme"
+import { LeftArrow } from "./Icons"
 
 export default function ThemeSwitcher() {
-    const { isLightTheme, toggleTheme } = useTheme();
+    const { isLightTheme, toggleTheme } = useTheme()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isThemeButtonHovered, setIsThemeButtonHovered] = useState(false)
 
@@ -52,5 +52,5 @@ export default function ThemeSwitcher() {
                 </motion.button>
             </motion.aside>
         </AnimatePresence>
-    );
+    )
 }

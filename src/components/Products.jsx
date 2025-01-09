@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import Loader from "./Loader";
+import Loader from "./Loader"
 
 export function Products() {
     const [productData, setProductData] = useState({ products: [] })
@@ -8,7 +8,7 @@ export function Products() {
         fetch('https://dummyjson.com/products')
             .then(res => res.json())
             .then(json => setProductData(json))
-    }, []);
+    }, [])
 
     const hasProducts = useMemo(
         () => productData?.products?.length > 0,

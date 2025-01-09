@@ -7,7 +7,8 @@ import Loader from "./Loader"
 import fontColorContrast from 'font-color-contrast'
 import { CheckIcon, CloseIcon, ColorIcon, EditIcon, PlusIcon } from "./Icons"
 import { openModal } from "../store/modal/modal"
-import { colors } from "../utils/constants"
+import { colors, toastMessages } from "../utils/constants"
+import toast from 'react-hot-toast'
 
 const { todoBgColor } = colors
 
@@ -23,7 +24,7 @@ const variants = {
             duration: 0.5,
         },
     }),
-    hidden: { 
+    hidden: {
         opacity: 0,
         filter: "blur(5px)",
         y: -20
@@ -32,12 +33,11 @@ const variants = {
         opacity: 0,
         y: 20,
         filter: "blur(5px)",
-        transition: 
+        transition:
             { duration: 0.5 }
     },
     hover: {
         scale: [ null, 1.05, 1 ],
-        filter: ["blur(0px)", "blur(1px)", "blur(0px)"],
         transition: {
             duration: .5,
         }
@@ -78,7 +78,7 @@ export default function Todo() {
         if (getLocalTodos().length > 0)
             dispatch(setTodoData(getLocalTodos()))
         else {
-            fetch('https://dummyjson.com/todos/?limit=10')
+            fetch('https://dummyjson.com/todos/?limit=5')
                 .then(res => res.json())
                 .then(json => {
                     const updatedTodos = json.todos.map(todo => ({
@@ -110,8 +110,9 @@ export default function Todo() {
             setTimeout(() => { // for some reason (I suspect rendering of input), select works, but produces no result. After settimeout delay, it's ok
                 setIsEditing(true)
                 const currentInput = e.target.parentNode.parentNode.querySelector('#todoInput')
+                currentInput.focus()
                 currentInput.select()
-            }, 0);
+            }, 0)
         } else
             setIsEditing(false)
 
@@ -129,6 +130,9 @@ export default function Todo() {
         )
         setIsEditing(false)
         dispatch(setTodoData(newList))
+
+        if (tempText !== currentText)
+            toast.success(toastMessages.todo.edit)
     }
 
     const cancelEdit = (e, id) => {
@@ -145,6 +149,7 @@ export default function Todo() {
         if (colorPicker)
             colorPicker.click()
         e.target.blur()
+        // toast.success(toastMessages.todo.color)
     }
 
     const handleColorChange = (e, id) => {
@@ -160,13 +165,18 @@ export default function Todo() {
             ? { ...todo, completed: !todo.completed }
             : todo
         )
+        const isCurrentTodoCompleted = todoList.find(todo => todo.id === id && !todo.completed) // reversed
         e.target.blur()
         dispatch(setTodoData(newList))
+
+        if (isCurrentTodoCompleted)
+            toast.success(toastMessages.todo.completed)
     }
 
     const removeTodo = (id) => {
         const newList = todoList.filter(todo => todo.id != id)
         dispatch(setTodoData(newList))
+        toast.success(toastMessages.todo.remove)
     }
 
     const handleTodoTitleChange = (e) => {
@@ -204,7 +214,6 @@ export default function Todo() {
                                             id="todoInput"
                                             className="todo-input"
                                             value={tempText}
-                                            onKeyDown={e => handleKeyPress(e)}
                                             onChange={e => handleTodoTitleChange(e)}
                                         />
                                     ) : (
@@ -237,7 +246,7 @@ export default function Todo() {
             ) : (
                 <Loader />
             )}
-            <motion.button 
+            <motion.button
                 variants={floatingButtonVariants}
                 whileHover="hover"
                 whileTap="tap"

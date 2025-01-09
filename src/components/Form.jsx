@@ -1,40 +1,40 @@
-import React, { useMemo, useState } from "react";
-import { errorMessages } from "../utils/constants";
+import React, { useMemo, useState } from "react"
+import { errorMessages } from "../utils/constants"
 
 export default function Form() {
     const [formData, setFormData] = useState({
         name: "",
         surname: "",
         message: "",
-    });
+    })
 
     const [errorData, setErrorData] = useState({
         name: "",
         surname: "",
         message: "",
-    });
+    })
 
-    const [isFormSubmited, setIsFormSubmited] = useState(false);
+    const [isFormSubmited, setIsFormSubmited] = useState(false)
 
     const handleFormSubmit = (e) => {
-        setIsFormSubmited(true);
-        e.preventDefault();
-        localStorage.setItem("formData", JSON.stringify(formData));
-    };
+        setIsFormSubmited(true)
+        e.preventDefault()
+        localStorage.setItem("formData", JSON.stringify(formData))
+    }
 
     const formChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
 
-        if (isFormSubmited) setIsFormSubmited(false);
+        if (isFormSubmited) setIsFormSubmited(false)
 
         setFormData((prevState) => ({
             ...prevState,
             [name]: value,
-        }));
-    };
+        }))
+    }
 
     const formValidate = (e, type) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
 
         setErrorData((prevState) => ({
             ...prevState,
@@ -42,18 +42,18 @@ export default function Form() {
                 type.includes('required') && !value
                     ? errorMessages.required
                     : "",
-        }));
-    };
+        }))
+    }
 
     const isDisabledButton = useMemo(
         () => Object.values(formData).some((value) => !value),
         [JSON.stringify(formData)]
-    );
+    )
 
     const hasSubmitedForm = useMemo(
         () => Object.values(formData).some((value) => !value) && isFormSubmited,
         [JSON.stringify(formData)]
-    );
+    )
 
     return (
         <form className="App" onSubmit={handleFormSubmit}>
@@ -81,5 +81,5 @@ export default function Form() {
                 Submit
             </button>
         </form>
-    );
+    )
 }
