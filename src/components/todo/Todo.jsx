@@ -99,9 +99,7 @@ export default function Todo() {
     const editTodo = (e, currentTodo) => {
         const currentText = e.target.parentNode.parentNode.querySelector('#todoTitle')?.innerText
         const todoElementCard = e.target.parentNode.parentNode
-        const todoContainer = document.querySelector('.js-cards')
 
-        todoContainer.childNodes.forEach(todo => todo.style.zIndex = '0')
         todoElementCard.style.zIndex = '2'
         
         if (currentText) {
@@ -129,12 +127,18 @@ export default function Todo() {
             dispatch(setIsEditing(false))
     }
 
+    const resetZIndex = () => {
+        const todoContainer = document.querySelector('.js-cards')
+        todoContainer.childNodes.forEach(todo => todo.style.zIndex = '0')
+    }
+
     const saveEdit = (e, id) => {
         const currentTitle = e.target.parentNode.parentNode.querySelector('#todoInput').value
         const newList = todoList.map(todo => todo.id === id
             ? { ...todo, todo: currentTitle, isEditing: false }
             : todo
         )
+        resetZIndex()
         dispatch(setIsEditing(false))
         dispatch(setTodoData(newList))
         dispatch(closeModal())
@@ -148,6 +152,7 @@ export default function Todo() {
             ? { ...todo, todo: currentText, isEditing: false }
             : todo
         )
+        resetZIndex()
         dispatch(setIsEditing(false))
         dispatch(setTodoData(newList))
         dispatch(closeModal())
