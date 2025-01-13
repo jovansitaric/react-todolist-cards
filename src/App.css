@@ -3,6 +3,11 @@
 }
 
 #root {
+  width: 100%;
+}
+
+.app-container {
+  position: relative;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -52,6 +57,7 @@ a {
 }
 
 .cards {
+  position: relative;
   list-style: none;
   display: grid;
   gap: 16px;
@@ -66,13 +72,14 @@ a {
   display: grid;
   place-content: center;
   min-height: 7rem;
-  padding: 2em;
+  padding: 2rem;
   color: #fff;
   background-color: #e7ad40;
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, .1), inset 0 0 5px #000;
   text-align: center;
+  z-index: 0;
   transition: background-color 400ms;
 
   &.completed {
@@ -98,7 +105,7 @@ a {
 
 @media (min-width: 1024px) {
   .cards {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(390px, 1fr));
   }
 }
 
@@ -309,11 +316,15 @@ a {
     }
 }
 
-.todo-input {
-  padding: .5rem 1rem;
-  text-align: center;
-  border: 0;
-  background-color: transparent;
+.todo-input-container {
+  width: 100%;
+
+  .todo-input {
+    padding: .5rem 1rem;
+    text-align: center;
+    border: 0;
+    background-color: transparent;
+  }
 }
 
 .modal {
@@ -321,6 +332,7 @@ a {
   inset: 0;
   display: grid;
   place-content: center;
+  text-align: center;
   background-color: #0009;
   z-index: 1;
 

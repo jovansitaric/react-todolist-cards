@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useTheme } from "../hooks/useTheme"
-import { LeftArrow } from "./Icons"
+import { useTheme } from "../../hooks/useTheme"
+import { LeftArrow } from "../icons/Icon"
 
 export default function ThemeSwitcher() {
     const { isLightTheme, toggleTheme } = useTheme()

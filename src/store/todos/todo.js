@@ -4,19 +4,18 @@ export const todosSlice = createSlice({
     name: 'todo',
     initialState: {
         todos: null,
-        loading: false,
-        error: null
+        isEditing: false
     },
     reducers: {
         setTodoData(state, action) {
             state.todos = action.payload
             localStorage.setItem('todos', JSON.stringify(action.payload))
         },
-        setError(state, action) {
-            state.error = action.payload
-        },
+        setIsEditing(state, action) {
+            state.isEditing = action.payload
+        }
     }
 })
 
-export const { setTodoData, setError } = todosSlice.actions
+export const { setTodoData, setIsEditing } = todosSlice.actions
 export default todosSlice.reducer

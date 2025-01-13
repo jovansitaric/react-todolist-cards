@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useDispatch, useSelector } from "react-redux"
-import { setTodoData } from '../store/todos/todo'
-import Loader from "./Loader"
+import { useEffect, useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useDispatch, useSelector } from 'react-redux'
+import { setTodoData, setIsEditing } from '../../store/todos/todo'
+import Loader from '../Loader'
 
 import fontColorContrast from 'font-color-contrast'
-import { CheckIcon, CloseIcon, ColorIcon, EditIcon, PlusIcon } from "./Icons"
-import { openModal } from "../store/modal/modal"
-import { colors, toastMessages } from "../utils/constants"
+import { CheckIcon, CloseIcon, ColorIcon, EditIcon, PlusIcon, ReloadIcon } from '../icons/Icon.jsx'
+import { openModal, closeModal } from '../../store/modal/modal'
+import { colors, toastMessages } from '../../utils/constants'
 import toast from 'react-hot-toast'
 
 const { todoBgColor } = colors
@@ -66,11 +66,10 @@ const floatingButtonVariants = {
 }
 
 export default function Todo() {
-    const todoList = useSelector(state => state.todos.todos)
+    const {todos: todoList, isEditing } = useSelector(state => state.todos)
 
     const [tempText, setTempText] = useState('')
     const [currentText, setCurrentText] = useState('')
-    const [isEditing, setIsEditing] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -99,27 +98,35 @@ export default function Todo() {
 
     const editTodo = (e, currentTodo) => {
         const currentText = e.target.parentNode.parentNode.querySelector('#todoTitle')?.innerText
+        const todoElementCard = e.target.parentNode.parentNode
+        const todoContainer = document.querySelector('.js-cards')
+
+        todoContainer.childNodes.forEach(todo => todo.style.zIndex = '0')
+        todoElementCard.style.zIndex = '2'
+        
         if (currentText) {
             setCurrentText(currentText)
             setTempText(currentText)
         }
 
-        e.target.style.pointerEvents = 'all'
-
-        if (!currentTodo.isEditing) { // it's reversed since we still didn't switched editing
-            setTimeout(() => { // for some reason (I suspect rendering of input), select works, but produces no result. After settimeout delay, it's ok
-                setIsEditing(true)
-                const currentInput = e.target.parentNode.parentNode.querySelector('#todoInput')
-                currentInput.focus()
-                currentInput.select()
-            }, 0)
-        } else
-            setIsEditing(false)
-
         const newList = todoList.map(todo =>
-            todo.id === currentTodo.id ? { ...todo, isEditing: !todo.isEditing } : todo
+            todo.id === currentTodo.id 
+                ? { ...todo, isEditing: !todo.isEditing } 
+                : todo
         )
         dispatch(setTodoData(newList))
+        dispatch(openModal())
+
+        if (!currentTodo.isEditing) { // it's reversed since we still didn't switched editing
+            setTimeout(() => { // due to rendering of input, select works, but produces no result. After settimeout delay, it's ok
+                dispatch(setIsEditing(true))
+                const currentInput = e.target.parentNode.parentNode.querySelector('#todoInput')
+                
+                currentInput.focus()
+                currentInput.select()
+            }, 0) 
+        } else
+            dispatch(setIsEditing(false))
     }
 
     const saveEdit = (e, id) => {
@@ -128,26 +135,28 @@ export default function Todo() {
             ? { ...todo, todo: currentTitle, isEditing: false }
             : todo
         )
-        setIsEditing(false)
+        dispatch(setIsEditing(false))
         dispatch(setTodoData(newList))
+        dispatch(closeModal())
 
         if (tempText !== currentText)
             toast.success(toastMessages.todo.edit)
     }
 
-    const cancelEdit = (e, id) => {
+    const cancelEdit = (id) => {
         const newList = todoList.map(todo => todo.id === id
             ? { ...todo, todo: currentText, isEditing: false }
             : todo
         )
+        dispatch(setIsEditing(false))
         dispatch(setTodoData(newList))
-        setIsEditing(false)
+        dispatch(closeModal())
     }
 
     const colorTodo = (e) => {
-        const colorPicker = e.target.querySelector('#colorPicker')
-        if (colorPicker)
-            colorPicker.click()
+        const colorPickerLabel = e.target.querySelector('#colorPickerLabel')
+        if (colorPickerLabel)
+            colorPickerLabel.click()
         e.target.blur()
         // toast.success(toastMessages.todo.color)
     }
@@ -187,7 +196,7 @@ export default function Todo() {
         <>
             <h1>Sticky Cards TodoList</h1>
             { hasTodos ? (
-                <ul className="cards">
+                <ul className="cards js-cards">
                     <AnimatePresence>
                         { todoList.map((todo, i) => (
                             <motion.li
@@ -207,7 +216,7 @@ export default function Todo() {
                                 animate="visible"
                                 exit="exit"
                                 transition="transition">
-                                <div>
+                                <div className="todo-input-container">
                                     { todo.isEditing ? (
                                         <input
                                             type="text"
@@ -222,7 +231,11 @@ export default function Todo() {
                                 </div>
                                 <div className='todo-actions'>
                                     <button type="button" className="icon icon-check" onClick={(e) => isEditing ? saveEdit(e, todo.id) : completeTodo(e, todo.id)}>
-                                        <CheckIcon />
+                                        { todo.completed ? (
+                                            <ReloadIcon />
+                                        ) : (
+                                            <CheckIcon />
+                                        )}
                                     </button>
                                     { ( !todo.completed && !isEditing ) &&
                                     <>
@@ -230,12 +243,13 @@ export default function Todo() {
                                             <EditIcon />
                                         </button>
                                         <button type="button" className="icon icon-color" onClick={(e) => colorTodo(e, todo.id)}>
+                                            <label htmlFor="colorPicker" id="colorPickerLabel"></label>
                                             <input id="colorPicker" className="hidden" type="color" tabIndex={-1} value={todoBgColor} onChange={(e) => handleColorChange(e, todo.id)} />
                                             <ColorIcon />
                                         </button>
                                     </>
                                     }
-                                    <button type="button" className="icon icon-close" onClick={(e) => isEditing ? cancelEdit(e, todo.id) : removeTodo(todo.id)}>
+                                    <button type="button" className="icon icon-close" onClick={() => isEditing ? cancelEdit(todo.id) : removeTodo(todo.id)}>
                                         <CloseIcon />
                                     </button>
                                 </div>

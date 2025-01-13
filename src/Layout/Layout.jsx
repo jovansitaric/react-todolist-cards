@@ -1,6 +1,6 @@
 import React from "react"
 import { Outlet } from "react-router-dom"
-import ThemeSwitcher from "../components/ThemeSwitcher"
+import ThemeSwitcher from "../components/themeSwitcher/ThemeSwitcher"
 
 export default function Layout() {
     return (
